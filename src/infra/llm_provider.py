@@ -5,3 +5,12 @@ LOCAL_PATH = "/home/zeus/.cache/huggingface/hub/models--mradermacher--bagel-8b-v
 
 llm = Llama(model_path=LOCAL_PATH, n_ctx=8192)
 llm.set_cache(LlamaDiskCache(capacity_bytes=(2 << 30)))
+
+def stream_completion_outputs(llm_stream):
+    response = ""
+    for t in llm_stream:
+        u = t["choices"][0]["text"]
+        response = response + u
+        print(u, end='', flush=True)
+        #break
+    return response

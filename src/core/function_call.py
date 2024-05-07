@@ -18,6 +18,8 @@ Be sure to respect any facts cited and do not override those. *Important*: Pleas
 
 # Functions for LLM to use
 
+# TODO: need to return dict with further instructions
+
 def web_search_synthesis(search_query: str, topic_question: str) -> str:
     """Synthesize an answer, with inline citations, through searching the web 
     and then passing it through a RAG (Retrieval Augmented Generation) pipeline 
@@ -69,7 +71,7 @@ def do_web_search_synthesis(a, b):
 
 
 def run_code_interpreter(r):
-    print("run_code_interpreter")
+    print("run_code_interpreter") # TODO: implement code interpreter
     print(r)
 
 function_registry = {

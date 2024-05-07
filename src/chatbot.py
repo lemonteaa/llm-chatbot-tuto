@@ -2,7 +2,7 @@ from llama_cpp import Llama, LlamaDiskCache, LlamaGrammar, LlamaTokenizer
 
 import json
 
-from infra.llm_provider import llm
+from infra.llm_provider import llm, stream_completion_outputs
 
 from core.prompt_templates import *
 from core.function_call import *
@@ -38,21 +38,11 @@ while True:
         message_history.append({ "role": "system", "content": f"{fn_result['further_instruct']}\n\n# Function call result:\n{fn_result['answer']}"})
         p2 = chatml_template(message_history, nudge_role="assistant")
         o2_stream = llm(prompt=p2, max_tokens=500, stop=["<|im_end|>"], stream=True)
-        response = ""
-        for t in o2_stream:
-            u = t["choices"][0]["text"]
-            response = response + u
-            print(u, end='', flush=True)
-            #break
+        response = stream_completion_outputs(o2_stream)
         message_history.append({ "role": "assistant", "content": response })
     elif role_pick == "assistant":
         llm_stream = llm(prompt = p1 + "assistant\n", max_tokens=800, stop=["<|im_end|>"], stream=True)
-        response = ""
-        for t in llm_stream:
-            u = t["choices"][0]["text"]
-            response = response + u
-            print(u, end='', flush=True)
-            #break
+        response = stream_completion_outputs(llm_stream)
         message_history.append({ "role": "assistant", "content": response })
     else:
         raise ValueError("Unknown role:" + role_pick)
