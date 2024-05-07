@@ -1,6 +1,9 @@
 import outlines
+from llama_cpp import LlamaGrammar
 
 from infra.llm_provider import llm
+
+from infra.docker_container_session import *
 
 q = "Please generate a plot of the price of SP500 in the last week with hourly data, and save it to a file named sp500-plot.png."
 
@@ -102,3 +105,31 @@ Assistant:
     """
 
 
+
+
+def code_interpreter_loop(request, session_name):
+    conf = DockerContainerConfig()
+    try:
+        codeInterpreter = DockerCodeInterpreterSession("../code-int-storages")
+        history = []
+        done = False
+        codeInterpreter.start_session(session_name, conf)
+        while not done:
+            prompt = code_interpreter_prompt(request, conf.bind_dir, history)
+            response = llm(prompt=prompt, stop=["--"], grammar=LlamaGrammar.from_string(react_grammar))
+            parsed_response = parse_response(response["choices"][0]["text"])
+            if parsed_response["action_type"] == "Exit":
+                done = True
+                print("Code interpreter DONE!")
+            elif parsed_response["action_type"] == "Terminal Command":
+                commandOutput = codeInterpreter.run_single_command(parsed_response["command"], work_dir=conf.bind_dir)
+                parsed_response["observation"] = commandOutput
+            elif parsed_response["action_type"] == "Write files":
+                pass # TODO
+            else:
+                raise ValueError()
+            history.append(parsed_response)
+    except BaseException as e:
+        print(e)
+    finally:
+        codeInterpreter.stop_session()
