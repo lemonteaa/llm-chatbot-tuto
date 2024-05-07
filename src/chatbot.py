@@ -2,10 +2,10 @@ from llama_cpp import Llama, LlamaDiskCache, LlamaGrammar, LlamaTokenizer
 
 import json
 
-from llm_provider import llm
+from infra.llm_provider import llm
 
-from prompt_templates import *
-from function_call import *
+from core.prompt_templates import *
+from core.function_call import *
 
 web_question1 = "What is the latest news on the war in Ukraine? I'm interested in the impact on financial markets."
 offline_question1 = "Hi there! How's your day going?"

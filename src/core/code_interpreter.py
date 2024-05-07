@@ -1,6 +1,6 @@
 import outlines
 
-from llm_provider import llm
+from infra.llm_provider import llm
 
 q = "Please generate a plot of the price of SP500 in the last week with hourly data, and save it to a file named sp500-plot.png."
 

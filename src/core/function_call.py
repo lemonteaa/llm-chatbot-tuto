@@ -1,7 +1,7 @@
-from web_search_rag import *
+from infra.web_search_rag import *
 #from chatbot import grounded_gen
-from prompt_templates import grounded_generation_prompt
-from llm_provider import llm
+from core.prompt_templates import grounded_generation_prompt
+from infra.llm_provider import llm
 
 def grounded_gen(nodes, a, b):
     prompt1 = grounded_generation_prompt(nodes, a, b)
